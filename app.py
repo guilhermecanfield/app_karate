@@ -4,11 +4,22 @@ import pandas as pd
 # Configurações iniciais da página
 st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 
+st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
+
 image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
-st.image(image_url, width=200)
+# st.image(image_url, width=200)
+
+# Exibe a imagem centralizada
+st.markdown(
+    f"""
+    <div style='display: flex; justify-content: center;'>
+        <img src="{image_url}" width="200">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Título
-st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
 
 # Descrição
 st.write("""
