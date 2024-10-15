@@ -12,10 +12,10 @@ image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-
 # Exibe a imagem centralizada
 st.markdown(
     f"""
-    <div style='display: flex; justify-content: center;'>
-        <img src="{image_url}" width="200">
+    <div style='display: flex; justify-content: center; margin-bottom: 20px;'>
+        <img src="{image_url}" width="250">
     </div>
-    
+
     """,
     unsafe_allow_html=True
 )
