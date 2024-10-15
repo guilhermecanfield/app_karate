@@ -8,10 +8,10 @@ st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 col1, col2 = st.columns(2)
 with col1:
     image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
-    st.image(image_url, width=150)
+    st.image(image_url, width=100)
 with col2:
     image_url = "https://karateshubudo.com.br/wp-content/uploads/2024/02/LOGO_KARATE-JPG-2010-1536x1536.jpg"
-    st.image(image_url, width=150)
+    st.image(image_url, width=100)
 
 # Título
 st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
@@ -33,7 +33,6 @@ def load_data(file_path):
 
 file_path = "kata.csv"
 data = load_data(file_path)
-data_exibicao = data[['categoria', 'atleta', 'mesa', 'academia']].copy()
 
 # Listas únicas para filtros, ordenadas
 atletas_unicos = sorted(data['atleta'].dropna().unique())
@@ -45,19 +44,19 @@ academia = st.multiselect("Academia", options=academias_unicas, placeholder='Sel
 atleta = st.multiselect("Atleta", options=atletas_unicos, placeholder='Selecionar Atleta')
 
 # Aplicar filtros nos dados
-filtered_data = data_exibicao
+filtered_data = data
 
 if academia:
     filtered_data = filtered_data[filtered_data['academia'].isin(academia)]
 
 if atleta:
-    grupos_atleta = data[data['atleta'].isin(atleta)]['no_da_categoria'].unique()
-    filtered_data = filtered_data[filtered_data['no_da_categoria'].isin(grupos_atleta)]
+    grupos_atleta = data[data['atleta'].isin(atleta)]['categoria'].unique()
+    filtered_data = filtered_data[filtered_data['categoria'].isin(grupos_atleta)]
 
 # Exibir tabela de dados filtrados
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de Katas</h2>", unsafe_allow_html=True)
 st.write("**Apresentações:**", len(filtered_data))
-st.dataframe(filtered_data)
+st.dataframe(filtered_data[['categoria', 'atleta', 'mesa', 'academia']])
 
 # Estatísticas adicionais
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
@@ -96,7 +95,7 @@ with col2:
 col1, col2 = st.columns(2)
 with col1:
     st.write("**Distribuição de atletas por faixa etária:**")
-    st.write(filtered_data['idade'].value_counts())
+    st.write(data['idade'].value_counts())
 with col2:
     st.write("**Distribuição por Graduação:**")
-    st.write(filtered_data['faixa'].value_counts())
+    st.write(data['faixa'].value_counts())
