@@ -47,6 +47,7 @@ def display_data(data):
 # Carregar o arquivo CSV de dados
 file_path = "kata.csv"
 data = load_data(file_path)
+data = data.dropna()
 
 # Unindo as colunas de atletas e academias para obter listas únicas, removendo NaNs
 atletas_unicos = sorted(data['atleta'].dropna().unique())
