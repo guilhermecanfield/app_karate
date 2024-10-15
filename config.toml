@@ -1,0 +1,8 @@
+[theme]
+base="light"  # ou "dark" conforme a preferência
+
+[browser]
+gatherUsageStats = false  # Desativa as estatísticas
+
+[server]
+hideStreamlitBanner = true

@@ -33,7 +33,7 @@ def load_data(file_path):
 
 file_path = "kata.csv"
 data = load_data(file_path)
-data = data.dropna()
+data_exibicao = data[['categoria', 'atleta', 'mesa', 'academia']].copy()
 
 # Listas únicas para filtros, ordenadas
 atletas_unicos = sorted(data['atleta'].dropna().unique())
@@ -45,7 +45,7 @@ academia = st.multiselect("Academia", options=academias_unicas, placeholder='Sel
 atleta = st.multiselect("Atleta", options=atletas_unicos, placeholder='Selecionar Atleta')
 
 # Aplicar filtros nos dados
-filtered_data = data
+filtered_data = data_exibicao
 
 if academia:
     filtered_data = filtered_data[filtered_data['academia'].isin(academia)]
@@ -68,22 +68,22 @@ with col1:
     st.write(
         filtered_data.groupby('academia').agg({
             'atleta': 'nunique',
-            'no_da_categoria': 'nunique'
+            'categoria': 'nunique'
         }).rename(columns={
             'atleta': 'Quantidade de Atletas',
-            'no_da_categoria': 'Ouros Possíveis'
+            'categoria': 'Ouros Possíveis'
         }).sort_values('Quantidade de Atletas', ascending=False)
     )
 
 with col2:
     st.write("**Contagem de Confrontos entre Academias**")
     confrontos_data = (
-        filtered_data.groupby(['no_da_categoria', 'academia'])
+        filtered_data.groupby(['categoria', 'academia'])
         .size()
         .reset_index(name='contagem_lutas')
     )
     confrontos_entre_academias = (
-        confrontos_data.merge(confrontos_data, on='no_da_categoria', suffixes=('_1', '_2'))
+        confrontos_data.merge(confrontos_data, on='categoria', suffixes=('_1', '_2'))
         .query("academia_1 != academia_2")
     )
     confrontos_entre_academias['total_confrontos'] = (
