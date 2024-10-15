@@ -56,7 +56,7 @@ if atleta:
 # Exibir tabela de dados filtrados
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de Katas</h2>", unsafe_allow_html=True)
 st.write("**Apresentações:**", len(filtered_data))
-st.dataframe(filtered_data[['categoria', 'atleta', 'mesa', 'academia']])
+st.dataframe(filtered_data[['categoria', 'atleta', 'mesa', 'academia']], hide_index=True)
 
 # Estatísticas adicionais
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
