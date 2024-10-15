@@ -4,6 +4,17 @@ import pandas as pd
 # Configurações iniciais da página
 st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 
+col1, col2 = st.columns(2)
+
+with col1:
+    # Adicionar a imagem
+    image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
+    st.image(image_url, width=250)
+with col2:
+    # Adicionar a imagem
+    image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/LOGO_KARATE-JPG-2010-Copia-1536x1536.png"
+    st.image(image_url, width=250)
+
 # Título
 st.title("Consulta de Apresentações - Campeonato de Karatê")
 
@@ -26,8 +37,8 @@ academias_unicas = sorted(data['academia'].dropna().unique())
 
 # Filtros
 st.sidebar.header("Filtros")
-academia = st.sidebar.multiselect("Academia", options=academias_unicas)
-atleta = st.sidebar.multiselect("Atleta", options=atletas_unicos)
+academia = st.sidebar.multiselect("Academia", options=academias_unicas, placeholder='Selecionar Academia')
+atleta = st.sidebar.multiselect("Atleta", options=atletas_unicos, placeholder='Selecionar Atleta')
 
 # Aplicar filtros nos dados
 filtered_data = data
