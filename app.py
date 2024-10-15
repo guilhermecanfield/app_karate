@@ -15,6 +15,7 @@ st.markdown(
     <div style='display: flex; justify-content: center;'>
         <img src="{image_url}" width="200">
     </div>
+    
     """,
     unsafe_allow_html=True
 )
