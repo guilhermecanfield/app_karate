@@ -4,14 +4,8 @@ import pandas as pd
 # Configurações iniciais da página
 st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 
-# Colunas para as imagens
-col1, col2 = st.columns(2)
-with col1:
-    image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
-    st.image(image_url, width=100)
-with col2:
-    image_url = "https://karateshubudo.com.br/wp-content/uploads/2024/02/LOGO_KARATE-JPG-2010-1536x1536.jpg"
-    st.image(image_url, width=100)
+image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
+st.image(image_url, width=200)
 
 # Título
 st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
@@ -90,7 +84,7 @@ with col2:
         .transform('sum')
     )
     confrontos_entre_academias = confrontos_entre_academias[['academia_1', 'academia_2', 'total_confrontos']].drop_duplicates().sort_values('total_confrontos', ascending=False)
-    st.dataframe(confrontos_entre_academias)
+    st.dataframe(confrontos_entre_academias, hide_index=True)
 
 col1, col2 = st.columns(2)
 with col1:
