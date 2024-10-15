@@ -17,7 +17,7 @@ def display_data(data):
     st.dataframe(data)
 
 # Carregar o arquivo CSV de dados
-file_path = "kata/tratado/kata.csv"
+file_path = "kata.csv"
 data = load_data(file_path)
 
 # Unindo as colunas de atletas e academias para obter listas únicas, removendo NaNs
