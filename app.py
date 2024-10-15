@@ -12,11 +12,28 @@ with col1:
     st.image(image_url, width=250)
 with col2:
     # Adicionar a imagem
-    image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/LOGO_KARATE-JPG-2010-Copia-1536x1536.png"
+    image_url = "https://karateshubudo.com.br/wp-content/uploads/2024/02/LOGO_KARATE-JPG-2010-1536x1536.jpg"
     st.image(image_url, width=250)
 
 # Título
-st.title("Consulta de Apresentações - Campeonato de Karatê")
+# st.title("Campeonato de Karatê Shubu-dô")
+
+st.markdown(
+    "<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", 
+    unsafe_allow_html=True
+)
+
+
+st.write("""
+        
+        #### - Informações:
+            
+            Campeonato de Luta e Katá
+            Dia: 20/10/2024
+            Horário: a partir das 09:00h
+            Local: Ginásio de Esportes Gurizão
+            Endereço: R. São João, 1042 – Santa Terezinha, Fazenda Rio Grande – PR, 83829-248
+    """)
 
 # Carregar os dados
 @st.cache_data
@@ -53,17 +70,17 @@ if atleta:
     filtered_data = filtered_data[filtered_data['no_da_categoria'].isin(grupos_atleta)]
 
 # Exibir dados filtrados
-st.markdown("<h2 style='text-align: center;'>Tabela Completa de Katas</h2>", unsafe_allow_html=True)
-st.write("**Apresentações filtradas:**", len(filtered_data))
+st.markdown("<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de Katas</h2>", unsafe_allow_html=True)
+st.write("**Apresentações:**", len(filtered_data))
 display_data(filtered_data)
 
 # Estatísticas adicionais
-st.markdown("<h2 style='text-align: center;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.write("Quantidade de atletas por academia:")
+    st.write("**Quantidade de atletas por academia:**")
     st.write(
         filtered_data.groupby('academia').agg({
             'atleta':'nunique',
@@ -76,7 +93,7 @@ with col1:
 
 with col2:
     # Contagem de lutas entre academias na mesma categoria
-    st.write("**Contagem de Lutas entre Academias**")
+    st.write("**Contagem de Confrontos entre Academias**")
 
     # Agrupar e contar lutas entre academias que estão na mesma categoria
     confrontos_data = (
@@ -104,9 +121,9 @@ with col2:
 col1, col2 = st.columns(2)
 
 with col1:
-    st.write("Distribuição de atletas por faixa etária:")
+    st.write("**Distribuição de atletas por faixa etária:**")
     st.write(filtered_data['idade'].value_counts())
 
 with col2:
-    st.write("Distribuição por Graduação:")
+    st.write("**Distribuição por Graduação:**")
     st.write(filtered_data['faixa'].value_counts())
