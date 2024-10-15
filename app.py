@@ -8,10 +8,10 @@ st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 col1, col2 = st.columns(2)
 with col1:
     image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
-    st.image(image_url, width=250)
+    st.image(image_url, width=50)
 with col2:
     image_url = "https://karateshubudo.com.br/wp-content/uploads/2024/02/LOGO_KARATE-JPG-2010-1536x1536.jpg"
-    st.image(image_url, width=250)
+    st.image(image_url, width=50)
 
 # Título
 st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
