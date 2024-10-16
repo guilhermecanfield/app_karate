@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from itertools import combinations
 
 # Configurações iniciais da página
 st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
@@ -20,8 +21,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Título
-
 # Descrição
 st.write("""
 #### Informações:
@@ -32,13 +31,65 @@ st.write("""
     Endereço: R. São João, 1042 – Santa Terezinha, Fazenda Rio Grande – PR, 83829-248
 """)
 
+# Define o endereço
+endereco = "R. São João, 1042 – Santa Terezinha, Fazenda Rio Grande – PR, 83829-248 - Ginásio de Esportes Gurizão "
+
+# Cria a URL do Google Maps com o endereço
+google_maps_url = f"https://www.google.com/maps/search/?api=1&query={endereco.replace(' ', '+')}"
+
+# Exibe o link estilizado como um botão
+st.markdown(f"""
+    <a href="{google_maps_url}" target="_blank" style="text-decoration: none;">
+        <button style="
+            display: inline-block;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            font-weight: bold;
+            color: white;
+            background-color: #D0312D;
+            border: none;
+            border-radius: 0.25em;
+            cursor: pointer;
+        ">
+            Abrir no Google Maps
+        </button>
+    </a>
+""", unsafe_allow_html=True)
+
+st.write("")
+
 # Carregar os dados
 @st.cache_data
-def load_data(file_path):
-    return pd.read_csv(file_path)
+def load_data(file_path, estilo):
+    df = pd.read_csv(file_path)
+    df = df[df.estilo == estilo.lower()]
+    return df
 
-file_path = "kata.csv"
-data = load_data(file_path)
+# Carregar os dados
+@st.cache_data
+def load_data_completo(file_path):
+    df = pd.read_csv(file_path)
+    return df
+
+file_path = "df_final.csv"
+
+estilo = st.radio(
+    "Selecione a Modalidade:",
+    ["Kata", "Luta"],
+    horizontal=True
+)
+df = load_data_completo(file_path)
+
+atletas_ambos_estilos = df.groupby('atleta').agg({'estilo':'nunique'}).query("estilo > 1").shape[0]
+
+st.write(
+    f"""
+    - {df[df.estilo == estilo.lower()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
+    - {atletas_ambos_estilos} paticiparão de ambas as modalidades, Kata e Luta
+    """
+)
+
+data = load_data(file_path, estilo)
 
 # Listas únicas para filtros, ordenadas
 atletas_unicos = sorted(data['atleta'].dropna().unique())
@@ -60,9 +111,11 @@ if atleta:
     filtered_data = filtered_data[filtered_data['categoria'].isin(grupos_atleta)]
 
 # Exibir tabela de dados filtrados
-st.markdown("<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de Katas</h2>", unsafe_allow_html=True)
-st.write("**Apresentações:**", len(filtered_data))
-st.dataframe(filtered_data[['categoria', 'atleta', 'mesa', 'academia']], hide_index=True)
+st.markdown(f"<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de {estilo}s</h2>", unsafe_allow_html=True)
+st.write(f"**Selecionados:**", len(filtered_data))
+st.dataframe(filtered_data[['categoria', 'atleta', 'local', 'academia', 'faixa']], hide_index=True)
+
+
 
 # Estatísticas adicionais
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
@@ -82,21 +135,34 @@ with col1:
 
 with col2:
     st.write("**Contagem de Confrontos entre Academias**")
-    confrontos_data = (
-        filtered_data.groupby(['categoria', 'academia'])
-        .size()
-        .reset_index(name='contagem_lutas')
-    )
-    confrontos_entre_academias = (
-        confrontos_data.merge(confrontos_data, on='categoria', suffixes=('_1', '_2'))
-        .query("academia_1 != academia_2")
-    )
-    confrontos_entre_academias['total_confrontos'] = (
-        confrontos_entre_academias.groupby(['academia_1', 'academia_2'])['contagem_lutas_1']
-        .transform('sum')
-    )
-    confrontos_entre_academias = confrontos_entre_academias[['academia_1', 'academia_2', 'total_confrontos']].drop_duplicates().sort_values('total_confrontos', ascending=False)
-    st.dataframe(confrontos_entre_academias, hide_index=True)
+    # confrontos_data = (
+    #     filtered_data.groupby(['categoria', 'academia'])
+    #     .size()
+    #     .reset_index(name='contagem_lutas')
+    # )
+    # confrontos_entre_academias = (
+    #     confrontos_data.merge(confrontos_data, on='categoria', suffixes=('_1', '_2'))
+    #     .query("academia_1 != academia_2")
+    # )
+    # confrontos_entre_academias['total_confrontos'] = (
+    #     confrontos_entre_academias.groupby(['academia_1', 'academia_2'])['contagem_lutas_1']
+    #     .transform('sum')
+    # )
+    # confrontos_entre_academias = confrontos_entre_academias[['academia_1', 'academia_2', 'total_confrontos']].drop_duplicates().sort_values('total_confrontos', ascending=False)
+    # st.dataframe(confrontos_entre_academias, hide_index=True)
+
+    # Agrupa os dados por 'categoria' para obter confrontos entre academias na mesma categoria
+    confrontos = []
+    for _, grupo in filtered_data.groupby('categoria'):
+        academias = grupo['academia'].unique()
+        # Gera combinações únicas entre academias na mesma categoria
+        for a1, a2 in combinations(sorted(academias), 2):
+            confrontos.append((a1, a2))
+
+    # Converte em DataFrame e conta os confrontos
+    confrontos_df = pd.DataFrame(confrontos, columns=['Academia 1', 'Academia 2'])
+    confrontos_df_final = confrontos_df.value_counts().reset_index(name='Confrontos')
+    st.dataframe(confrontos_df_final, hide_index=True)
 
 col1, col2 = st.columns(2)
 with col1:
