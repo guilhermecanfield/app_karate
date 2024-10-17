@@ -167,7 +167,7 @@ with col2:
 col1, col2 = st.columns(2)
 with col1:
     st.write("**Distribuição de atletas por faixa etária:**")
-    st.write(filtered_data['idade'].value_counts().rename(columns={'count':'Quantidade'}))
+    st.write(filtered_data['idade'].value_counts())
 with col2:
     st.write("**Distribuição por Graduação:**")
-    st.write(filtered_data['faixa'].value_counts().rename(columns={'count':'Quantidade'}))
+    st.write(filtered_data['faixa'].value_counts())
