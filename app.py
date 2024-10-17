@@ -71,7 +71,7 @@ def load_data_completo(file_path):
     df = pd.read_csv(file_path)
     return df
 
-file_path = "df_final.csv"
+file_path = "df_completo.csv"
 
 estilo = st.radio(
     "Selecione a Modalidade:",
@@ -81,13 +81,6 @@ estilo = st.radio(
 df = load_data_completo(file_path)
 
 atletas_ambos_estilos = df.groupby('atleta').agg({'estilo':'nunique'}).query("estilo > 1").shape[0]
-
-st.write(
-    f"""
-    - {df[df.estilo == estilo.lower()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
-    - {atletas_ambos_estilos} paticiparão de ambas as modalidades, Kata e Luta
-    """
-)
 
 data = load_data(file_path, estilo)
 
@@ -115,10 +108,31 @@ st.markdown(f"<h2 style='text-align: center; font-size: 28px;'>Tabela Completa d
 st.write(f"**Selecionados:**", len(filtered_data))
 st.dataframe(filtered_data[['categoria', 'atleta', 'local', 'academia', 'faixa']], hide_index=True)
 
-
-
 # Estatísticas adicionais
 st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write("**Total de Atletas:**")
+    st.write(
+        f"""
+        - {df[df.estilo == estilo.lower()].categoria.nunique()} {estilo}s
+        - {df[df.estilo == estilo.lower()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
+        - {atletas_ambos_estilos} paticiparão de ambas as modalidades, Kata e Luta
+        """
+    )
+
+with col2:
+    st.write("**Distribuição de Atletas por Gênero:**")
+    st.write(
+        f"""
+        - {df[(df.estilo == estilo.lower()) & (df.sexo == 'Masculino')].atleta.nunique()} atletas do sexo Masculino. \n
+        - {df[(df.estilo == estilo.lower()) & (df.sexo == 'Feminino')].atleta.nunique()} atletas do sexo Feminino.
+        """
+    )
+
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -128,9 +142,10 @@ with col1:
             'atleta': 'nunique',
             'categoria': 'nunique'
         }).rename(columns={
-            'atleta': 'Quantidade de Atletas',
+            'atleta': 'Atletas',
             'categoria': 'Ouros Possíveis'
-        }).sort_values('Quantidade de Atletas', ascending=False)
+        }).sort_values('Atletas', ascending=False)
+        
     )
 
 with col2:
