@@ -150,21 +150,6 @@ with col1:
 
 with col2:
     st.write("**Contagem de Confrontos entre Academias**")
-    # confrontos_data = (
-    #     filtered_data.groupby(['categoria', 'academia'])
-    #     .size()
-    #     .reset_index(name='contagem_lutas')
-    # )
-    # confrontos_entre_academias = (
-    #     confrontos_data.merge(confrontos_data, on='categoria', suffixes=('_1', '_2'))
-    #     .query("academia_1 != academia_2")
-    # )
-    # confrontos_entre_academias['total_confrontos'] = (
-    #     confrontos_entre_academias.groupby(['academia_1', 'academia_2'])['contagem_lutas_1']
-    #     .transform('sum')
-    # )
-    # confrontos_entre_academias = confrontos_entre_academias[['academia_1', 'academia_2', 'total_confrontos']].drop_duplicates().sort_values('total_confrontos', ascending=False)
-    # st.dataframe(confrontos_entre_academias, hide_index=True)
 
     # Agrupa os dados por 'categoria' para obter confrontos entre academias na mesma categoria
     confrontos = []
@@ -182,7 +167,7 @@ with col2:
 col1, col2 = st.columns(2)
 with col1:
     st.write("**Distribuição de atletas por faixa etária:**")
-    st.write(filtered_data['idade'].value_counts())
+    st.write(filtered_data['idade'].value_counts().rename(columns={'count':'Quantidade'}))
 with col2:
     st.write("**Distribuição por Graduação:**")
-    st.write(filtered_data['faixa'].value_counts())
+    st.write(filtered_data['faixa'].value_counts().rename(columns={'count':'Quantidade'}))
