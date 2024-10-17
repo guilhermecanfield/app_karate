@@ -7,7 +7,7 @@ st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
 
 st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
 
-image_url = "https://i.ibb.co/NYCJMsm/campeonato.jpg"
+image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
 # st.image(image_url, width=200)
 
 # Exibe a imagem centralizada
@@ -171,6 +171,3 @@ with col1:
 with col2:
     st.write("**Distribuição por Graduação:**")
     st.write(filtered_data['faixa'].value_counts())
-
-
-st.markdown('<p style="text-align: center; color: gray; font-size: small;">Powered by <strong>Academia Master - Paranaguá</strong></p>', unsafe_allow_html=True)
