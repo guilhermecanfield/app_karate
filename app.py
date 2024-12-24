@@ -1,6 +1,18 @@
 import streamlit as st
 import pandas as pd
 from itertools import combinations
+import os
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente
+load_dotenv()
+
+# Construir a URL do DB
+DB_HOST = os.getenv("DB_HOST")
+DB_DATABASE = os.getenv("DB_DATABASE")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_DATABASE}"
 
 # Configurações iniciais da página
 st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
