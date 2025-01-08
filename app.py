@@ -92,6 +92,8 @@ estilo = st.radio(
 df = load_data_completo()
 data = load_data(estilo=estilo)
 
+print(df.columns)
+
 atletas_ambos_estilos = df.groupby('atleta').agg({'estilo':'nunique'}).query("estilo > 1").shape[0]
 
 # Listas únicas para filtros, ordenadas
