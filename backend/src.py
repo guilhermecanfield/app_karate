@@ -1,8 +1,13 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, Column, Integer, Text, String
+from sqlalchemy import create_engine
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, sessionmaker
+
+from src.etl import gera_dados
+from models.atletas_luta_kata import AtletasLutaKata
+
 import pandas as pd
 
 # Carregar variáveis de ambiente
@@ -16,19 +21,6 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_DATABASE}"
 
 Base = declarative_base()
-
-# Criar Model
-class AtletasKata(Base):
-    __tablename__='atletas_kata'
-    chave = Column(Integer, autoincrement=True, primary_key=True)
-    categoria = Column(Integer) 
-    faixa = Column(String(100))
-    idade = Column(String(100))
-    atleta = Column(String(100))
-    sexo = Column(String(20))
-    estilo = Column(String(5))
-    academia = Column(String(100))
-    local = Column(String(12))
 
 # Criar conexão
 def get_engine():
@@ -45,7 +37,7 @@ engine = get_engine()
 def sobrescrever_tabela():
     try:
         # Remover a tabela existente
-        Base.metadata.drop_all(bind=engine, tables=[AtletasKata.__table__])
+        Base.metadata.drop_all(bind=engine, tables=[AtletasLutaKata.__table__])
 
         # Recriar a tabela
         Base.metadata.create_all(bind=engine)
@@ -59,20 +51,22 @@ Session = sessionmaker(bind=engine)
 
 # Função para inserir dados
 def inserir_dados():
+    """
+    Insere dados na tabela AtletasLutaKata.
+    """
     sobrescrever_tabela()
 
     session = Session()
     try:
         # Ler o arquivo CSV
-        df = pd.read_csv('df_completo.csv')
-        df = df.fillna("Nao Informado")
+        df = gera_dados()
 
         # Converter o DataFrame para uma lista de dicionários
         dados = df.to_dict(orient='records')
 
         # Criar objetos da classe SQLAlchemy e adicionar ao banco
         atletas = [
-            AtletasKata(
+            AtletasLutaKata(
                 categoria=row['categoria'],
                 faixa=row['faixa'],
                 idade=row['idade'],
@@ -95,6 +89,38 @@ def inserir_dados():
     finally:
         session.close()
 
-# Executar a inserção
-if engine:
-    inserir_dados()
+def ler_dados():
+    """
+    Lê dados da tabela AtletasLutaKata e retorna um DataFrame pandas.
+    """
+    session = Session()
+    try:
+        # Executar consulta na tabela AtletasLutaKata
+        query = session.query(AtletasLutaKata)
+        
+        # Converter os resultados da consulta para uma lista de dicionários
+        resultados = [
+            {
+                "categoria": row.categoria,
+                "faixa": row.faixa,
+                "idade": row.idade,
+                "atleta": row.atleta,
+                "sexo": row.sexo,
+                "estilo": row.estilo,
+                "academia": row.academia,
+                "local": row.local
+            }
+            for row in query
+        ]
+
+        # Criar um DataFrame a partir dos resultados
+        df = pd.DataFrame(resultados)
+        print("Dados lidos com sucesso!")
+        return df
+
+    except SQLAlchemyError as e:
+        print(f"Erro ao ler dados: {e}")
+        return pd.DataFrame()  # Retornar um DataFrame vazio em caso de erro
+
+    finally:
+        session.close()

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from itertools import combinations
+from backend.src import ler_dados
 import os
 from dotenv import load_dotenv
 
@@ -15,11 +16,11 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_DATABASE}"
 
 # Configurações iniciais da página
-st.set_page_config(page_title="Campeonato de Karatê", layout="wide")
+st.set_page_config(page_title="Torneio de Karatê", layout="wide")
 
-st.markdown("<h1 style='text-align: center;'>Campeonato de Karatê Shubu-dô</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Torneio de Karatê</h1>", unsafe_allow_html=True)
 
-image_url = "https://karateshubudo.com.br/wp-content/uploads/2021/12/2-Academia-Master-Karate-Shubu-do.jpg"
+image_url = "https://cdn.leonardo.ai/users/2a909725-4edc-44d7-b332-54400832d020/generations/e8f640d2-754d-4843-841d-556f67a949d5/Leonardo_Phoenix_09_A_vibrant_and_dynamic_banner_announcing_a_2.jpg"
 # st.image(image_url, width=200)
 
 # Exibe a imagem centralizada
@@ -36,8 +37,8 @@ st.markdown(
 # Descrição
 st.write("""
 #### Informações:
-    Campeonato de Luta e Katá  
-    Dia: 20/10/2024  
+    Torneio de Luta e Katá  
+    Dia: 08/02/2025  
     Horário: a partir das 09:00h  
     Local: Ginásio de Esportes Gurizão  
     Endereço: R. São João, 1042 – Santa Terezinha, Fazenda Rio Grande – PR, 83829-248
@@ -72,29 +73,26 @@ st.write("")
 
 # Carregar os dados
 @st.cache_data
-def load_data(file_path, estilo):
-    df = pd.read_csv(file_path)
-    df = df[df.estilo == estilo.lower()]
+def load_data(estilo):
+    df = ler_dados()
+    df = df[df.estilo == estilo.title()]
     return df
 
 # Carregar os dados
 @st.cache_data
-def load_data_completo(file_path):
-    df = pd.read_csv(file_path)
+def load_data_completo():
+    df = ler_dados()
     return df
-
-file_path = "df_completo.csv"
 
 estilo = st.radio(
     "Selecione a Modalidade:",
     ["Kata", "Luta"],
     horizontal=True
 )
-df = load_data_completo(file_path)
+df = load_data_completo()
+data = load_data(estilo=estilo)
 
 atletas_ambos_estilos = df.groupby('atleta').agg({'estilo':'nunique'}).query("estilo > 1").shape[0]
-
-data = load_data(file_path, estilo)
 
 # Listas únicas para filtros, ordenadas
 atletas_unicos = sorted(data['atleta'].dropna().unique())
@@ -116,12 +114,12 @@ if atleta:
     filtered_data = filtered_data[filtered_data['categoria'].isin(grupos_atleta)]
 
 # Exibir tabela de dados filtrados
-st.markdown(f"<h2 style='text-align: center; font-size: 28px;'>Tabela Completa de {estilo}s</h2>", unsafe_allow_html=True)
+st.markdown(f"<h2 style='text-align: 'left'; font-size: 28px;'>Tabela Completa de {estilo}s</h2>", unsafe_allow_html=True)
 st.write(f"**Selecionados:**", len(filtered_data))
 st.dataframe(filtered_data[['categoria', 'atleta', 'local', 'academia', 'faixa']], hide_index=True)
 
 # Estatísticas adicionais
-st.markdown("<h2 style='text-align: center; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: 'left'; font-size: 28px;'>Estatísticas do Campeonato</h2>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -129,8 +127,8 @@ with col1:
     st.write("**Total de Atletas:**")
     st.write(
         f"""
-        - {df[df.estilo == estilo.lower()].categoria.nunique()} {estilo}s
-        - {df[df.estilo == estilo.lower()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
+        - {df[df.estilo == estilo.title()].categoria.nunique()} chaves
+        - {df[df.estilo == estilo.title()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
         - {atletas_ambos_estilos} paticiparão de ambas as modalidades, Kata e Luta
         """
     )
@@ -139,8 +137,8 @@ with col2:
     st.write("**Distribuição de Atletas por Gênero:**")
     st.write(
         f"""
-        - {df[(df.estilo == estilo.lower()) & (df.sexo == 'Masculino')].atleta.nunique()} atletas do sexo Masculino. \n
-        - {df[(df.estilo == estilo.lower()) & (df.sexo == 'Feminino')].atleta.nunique()} atletas do sexo Feminino.
+        - {df[(df.estilo == estilo.title()) & (df.sexo == 'Masculino')].atleta.nunique()} atletas do sexo Masculino. \n
+        - {df[(df.estilo == estilo.title()) & (df.sexo == 'Feminino')].atleta.nunique()} atletas do sexo Feminino.
         """
     )
 
