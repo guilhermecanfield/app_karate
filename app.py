@@ -102,8 +102,18 @@ academias_unicas = sorted(data['academia'].dropna().unique())
 
 # Filtros principais, exibidos antes da tabela
 st.write("")
-academia = st.multiselect("Academia", options=academias_unicas, placeholder='Selecionar Academia')
-atleta = st.multiselect("Atleta", options=atletas_unicos, placeholder='Selecionar Atleta')
+
+academia = st.multiselect(
+    "Academia", 
+    options=academias_unicas, 
+    placeholder='Selecionar Academia'
+)
+
+atleta = st.multiselect(
+    "Atleta", 
+    options=atletas_unicos, 
+    placeholder='Selecionar Atleta'
+)
 
 # Aplicar filtros nos dados
 filtered_data = data
@@ -129,7 +139,7 @@ with col1:
     st.write("**Total de Atletas:**")
     st.write(
         f"""
-        - {df[df.estilo == estilo.title()].categoria.nunique()} chaves
+        - {df[df.estilo == estilo.title()].categoria.nunique()} Chaves
         - {df[df.estilo == estilo.title()].atleta.nunique()} atletas participarão do Campeonato de {estilo}. \n
         - {atletas_ambos_estilos} paticiparão de ambas as modalidades, Kata e Luta
         """
@@ -140,7 +150,8 @@ with col2:
     st.write(
         f"""
         - {df[(df.estilo == estilo.title()) & (df.sexo == 'Masculino')].atleta.nunique()} atletas do sexo Masculino. \n
-        - {df[(df.estilo == estilo.title()) & (df.sexo == 'Feminino')].atleta.nunique()} atletas do sexo Feminino.
+        - {df[(df.estilo == estilo.title()) & (df.sexo == 'Feminino')].atleta.nunique()} atletas do sexo Feminino. \n
+        - {df[(df.estilo == estilo.title()) & (df.sexo != 'Feminino') & (df.sexo != 'Masculino')].atleta.nunique()} atletas de categoria Mista. \n
         """
     )
 
