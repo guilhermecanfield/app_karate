@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from itertools import combinations
-from backend.src import ler_dados
+from backend.conexao_db import ler_dados
 import os
 from dotenv import load_dotenv
 
