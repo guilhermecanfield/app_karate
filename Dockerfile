@@ -30,4 +30,4 @@ EXPOSE 8501
 
 # Comando para iniciar o Streamlit usando poetry run
 ENTRYPOINT ["poetry", "run"]
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=localhost"]
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
