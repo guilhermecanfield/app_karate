@@ -1,22 +1,43 @@
 import streamlit as st
 import pandas as pd
 from itertools import combinations
-from backend.conexao_db import ler_dados
+from backend.conexao import ler_dados, get_engine
 import os
 from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente
-load_dotenv()
 
-# Construir a URL do DB
-DB_HOST = os.getenv("DB_HOST")
-DB_DATABASE = os.getenv("DB_DATABASE")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_DATABASE}"
+# Configurar cache para a conexão com o banco
+@st.cache_resource
+def init_connection():
+    load_dotenv()
+    return get_engine()
+
+# Configurar cache para a leitura dos dados
+@st.cache_data
+def get_data():
+    try:
+        return ler_dados()
+    except Exception as e:
+        st.error(f"Erro ao ler dados do banco: {e}")
+        return pd.DataFrame()
+
+# Configurar cache para filtrar dados por estilo
+@st.cache_data
+def load_data(estilo):
+    df = get_data()
+    if df.empty:
+        return df
+    return df[df.estilo == estilo.title()]
 
 # Configurações iniciais da página
 st.set_page_config(page_title="Torneio de Karatê", layout="wide")
+
+# Inicializar conexão com o banco
+engine = init_connection()
+
+# Resto do seu código permanece igual, apenas substituindo load_data_completo por get_data
+def load_data_completo():
+    return get_data()
 
 st.markdown("<h1 style='text-align: center;'>Torneio de Karatê</h1>", unsafe_allow_html=True)
 
@@ -71,28 +92,19 @@ st.markdown(f"""
 
 st.write("")
 
-# Carregar os dados
-@st.cache_data
-def load_data(estilo):
-    df = ler_dados()
-    df = df[df.estilo == estilo.title()]
-    return df
-
-# Carregar os dados
-@st.cache_data
-def load_data_completo():
-    df = ler_dados()
-    return df
-
 estilo = st.radio(
     "Selecione a Modalidade:",
     ["Kata", "Luta"],
     horizontal=True
 )
-df = load_data_completo()
-data = load_data(estilo=estilo)
 
-print(df.columns)
+# Carregar dados
+df = get_data()
+if df.empty:
+    st.error("Não foi possível carregar os dados. Por favor, verifique a conexão com o banco de dados.")
+    st.stop()
+
+data = load_data(estilo=estilo)
 
 atletas_ambos_estilos = df.groupby('atleta').agg({'estilo':'nunique'}).query("estilo > 1").shape[0]
 

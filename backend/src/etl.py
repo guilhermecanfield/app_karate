@@ -72,8 +72,10 @@ def gera_dados():
         if not 'MISTO' in file:
             df['idade'] = df['nome_da_categoria'].str.split('\n').str.get(0).str.split('–').str.get(1).str.strip().str.title()
             df['faixa'] = df['nome_da_categoria'].str.split('\n').str.get(0).str.split('–').str.get(2).str.strip().str.title()
+            df['faixa'] = df['faixa'].str.split(' ').apply(lambda x: ' '.join(x[:2]))
         else:
             df['faixa'] = df['nome_da_categoria'].str.split('\n').str.get(0).str.split('–').str.get(1).str.strip().str.title()
+            df['faixa'] = df['faixa'].str.split(' ').apply(lambda x: ' '.join(x[:2]))
             df['idade'] = 'Mista'
 
         # Preenchendo valores vazios e normalizando
